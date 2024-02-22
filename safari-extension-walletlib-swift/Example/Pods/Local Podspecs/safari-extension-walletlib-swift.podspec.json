@@ -1,0 +1,22 @@
+{
+  "name": "safari-extension-walletlib-swift",
+  "version": "0.1.0",
+  "summary": "A short description of safari-extension-walletlib-swift.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/michaelsulistio/safari-extension-walletlib-swift",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "michaelsulistio": "michaelsulistio@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/michaelsulistio/safari-extension-walletlib-swift.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "10.0"
+  },
+  "source_files": "safari-extension-walletlib-swift/Classes/**/*"
+}

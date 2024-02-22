@@ -1,0 +1,6 @@
+framework module safari_extension_walletlib_swift {
+  umbrella header "safari-extension-walletlib-swift-umbrella.h"
+
+  export *
+  module * { export * }
+}
