@@ -55,7 +55,9 @@ This request instructs the Swift handler to sign the `payloads` with the private
 
 The Javascript library exposes methods for sending RPC requests to the Swift Extension handler.
 
-In this example, the JS side uses the convenience function `sendNativeSignPayloadsRequest` to send a _SignPayloads_ request
+Example: Request Sign Paylaods
+Use the convenience function `sendNativeSignPayloadsRequest` to send a _SignPayloads_ request and receive
+a parsed result.
 
 ```ts
 import {
@@ -63,10 +65,15 @@ import {
   NativeSignPayloadsResult,
 } from "safari-extension-walletlib";
 
-const result: NativeSignPayloadsResult = await sendNativeSignPayloadsRequest({
-  address: someBase64EncodedAddress,
-  payloads: [someBase64EncodedPayload],
-});
+try {
+  const result: NativeSignPayloadsResult = await sendNativeSignPayloadsRequest({
+    address: someBase64EncodedAddress,
+    payloads: [someBase64EncodedPayload],
+  });
+  console.log(result.signed_payloads);
+} catch (err) {
+  console.error(err.message);
+}
 ```
 
 ## Usage: Swift
@@ -89,9 +96,13 @@ The Swift library provides extension methods on the `NSExtensionContext` to pars
 
 - Completes an RPC request with an error message.
 
+### Example: Handling requests
+
 The wallet can use these methods in the `beginRequest` in its `SafariWebExtensionHandler` to handle incoming requests.
 
 ```swift
+import SafariExtensionWalletlibSwift
+
 func beginRequest(with context: NSExtensionContext) {
   // Parse the method identifier from `context`
   guard let method = context.requestMethod() else {
@@ -101,11 +112,16 @@ func beginRequest(with context: NSExtensionContext) {
 
   switch method {
   case GET_ACCOUNTS_REQUEST_METHOD:
-    /* Implementation of get accounts */
     context.completeRpcRequestWith(result: GetAccountsResult(addresses: ["encoded_address"]))
     return
   case SIGN_PAYLOADS_REQUEST_METHOD:
-    /* Implementation of sign payloads */
+    // Decode SignPayloads params
+    guard let params: SignPayloadsParams = context.decodeRpcRequestParameter(toType: SignPayloadsParams.self),
+      !params.payloads.isEmpty else {
+      context.completeRpcRequestWith(errorMessage: "Error parsing Sign Payloads request")
+      return
+    }
+    // Implement signing then complete the request with result
     context.completeRpcRequestWith(result: SignPayloadsResult(signed_payloads: ["<encoded_signed_payload>"]))
     return
   default:
