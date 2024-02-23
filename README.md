@@ -21,8 +21,12 @@ pod install <TODO: Publish Podfile>
 
 ## RPC methods
 
-The SDK provides an implementation of two initial Wallet RPC requests for convenience : _GetAccounts_ and _SignPayloads_. Using them is optional and the wallet
-can create their own custom RPC requests, explained in the next section.
+The SDK provides an implementation of two initial Wallet RPC requests for convenience:
+
+- _GetAccounts_
+- _SignPayloads_
+
+Using them is optional and the wallet can create their own custom RPC requests, explained in the next section.
 
 These RPC methods are defined by a JSON Serializable Parameter and Result type. These types will are defined
 equivalently in both the Javascript library and the Swift library.
@@ -31,79 +35,21 @@ equivalently in both the Javascript library and the Swift library.
 
 This request instructs the Swift handler to return the accounts (or public key) associated with the requesting user.
 
-Javascript:
+- [Javascript model](https://github.com/solana-mobile/safari-extension-walletlib/blob/main/safari-extension-walletlib-js/src/nativeRpc/nativeGetAccounts.ts)
 
-```ts
-type NativeGetAccountsParams = {
-  extra_data?: Record<string, JSONObject>;
-};
+- [Swift model](https://github.com/solana-mobile/safari-extension-walletlib/blob/main/safari-extension-walletlib-swift/safari-extension-walletlib-swift/Classes/RpcRequestModels/GetAccounts.swift)
 
-type NativeGetAccountsResult = {
-  addresses: Base58EncodedAddress[];
-};
-
-export const NATIVE_GET_ACCOUNTS_RPC_METHOD = "NATIVE_GET_ACCOUNTS_METHOD";
-```
-
-Swift:
-
-```swift
-public struct GetAccountsParams: Decodable {
-    public let extra_data: [String: String]?
-}
-
-public struct GetAccountsResult: Encodable {
-    // Array of base58-encoded public keys
-    public let addresses: [String]
-
-    public init(addresses: [String]) {
-        self.addresses = addresses
-    }
-}
-
-public let GET_ACCOUNTS_REQUEST_METHOD = "NATIVE_GET_ACCOUNTS_METHOD"
-```
+- Convenience JS function: `sendNativeGetAccountsRequest`, for sending _GetAccounts_ request and parsing the response.
 
 ### SignPayloads
 
 This request instructs the Swift handler to sign the `payloads` with the private key that corresponds to the provided `address`.
 
-Javascript:
+- [Javascript model](https://github.com/solana-mobile/safari-extension-walletlib/blob/main/safari-extension-walletlib-js/src/nativeRpc/nativeSignPayloads.ts)
 
-```ts
-type NativeSignPayloadsParams = {
-  address: Base64EncodedAddress;
-  payloads: Base64EncodedPayload[];
-  extra_data?: Record<string, JSONObject>;
-};
+- [Swift model](https://github.com/solana-mobile/safari-extension-walletlib/blob/main/safari-extension-walletlib-swift/safari-extension-walletlib-swift/Classes/RpcRequestModels/SignPayloads.swift)
 
-type NativeSignPayloadsResult = {
-  signed_payloads: Base64EncodedSignedPayload[];
-};
-
-export const NATIVE_SIGN_PAYLOADS_RPC_METHOD = "NATIVE_SIGN_PAYLOADS_METHOD";
-```
-
-Swift:
-
-```swift
-public struct SignPayloadsParams: Decodable {
-  public let address: String // Base64EncodedAddress
-  public let payloads: [String] // Array of Base64EncodedPayloads
-  public let extra_data: [String: String]?
-}
-
-public struct SignPayloadsResult: Encodable {
-  // Array of Base64EncodedSignedPayloads
-  public let signed_payloads: [String]
-
-  public init(signed_payloads: [String]) {
-      self.signed_payloads = signed_payloads
-  }
-}
-
-public let SIGN_PAYLOADS_REQUEST_METHOD = "NATIVE_SIGN_PAYLOADS_METHOD"
-```
+- Convenience JS function: `sendNativeSignPayloadsRequest`, for sending _SignPayloads_ request and parsing the response.
 
 ## Usage: Javascript
 
@@ -112,14 +58,14 @@ The Javascript library exposes methods for sending RPC requests to the Swift Ext
 In this example, the JS side uses the convenience function `sendNativeSignPayloadsRequest` to send a _SignPayloads_ request
 
 ```ts
-import { fromUint8Array } from "js-base64";
-import { PublicKey } from "@solana/web3.js";
-import { sendNativeSignPayloadsRequest } from "safari-extension-walletlib";
+import {
+  sendNativeSignPayloadsRequest,
+  NativeSignPayloadsResult,
+} from "safari-extension-walletlib";
 
-const userPubkey = new PublicKey(/* ... */);
 const result: NativeSignPayloadsResult = await sendNativeSignPayloadsRequest({
-  address: fromUint8Array(userPubkey.toBytes()),
-  payloads: [fromUint8Array(payload)],
+  address: someBase64EncodedAddress,
+  payloads: [someBase64EncodedPayload],
 });
 ```
 
@@ -127,7 +73,21 @@ const result: NativeSignPayloadsResult = await sendNativeSignPayloadsRequest({
 
 The Swift library provides extension methods on the `NSExtensionContext` to parse these RPC requests and respond back to the Javascript side.
 
-- `NSExtensionContext.completeRpcRequestWith(errorMessage: string)`
+`requestMethod() -> String?`
+
+- Retrieves the RPC request's method name. Returns `nil` if unable to parse.
+
+`decodeRpcRequestParameter<T: Decodable>(toType type: T.Type) -> T?`
+
+- Decodes JSON string parameters from the RPC request into a specified `Decodable` type `T`. Returns an instance of `T` or `nil` on failure.
+
+`completeRpcRequestWith(result: Encodable)`
+
+- Completes an RPC request with a success result. Encodes the result to JSON and responds to Javascript. On failure to encode, it completes the request with an error.
+
+`completeRpcRequestWith(errorMessage: String)`
+
+- Completes an RPC request with an error message.
 
 The wallet can use these methods in the `beginRequest` in its `SafariWebExtensionHandler` to handle incoming requests.
 
