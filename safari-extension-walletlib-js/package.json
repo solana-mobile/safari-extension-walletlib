@@ -1,7 +1,7 @@
 {
-  "name": "safari-extension-walletlib",
+  "name": "@solana-mobile/safari-extension-walletlib-js",
   "version": "0.0.0-development",
-  "description": "A template for creating npm packages using TypeScript and VSCode",
+  "description": "The typescript portion of the Safari Extension Walletlib SDK for Solana Wallet apps.",
   "main": "./lib/index.js",
   "files": [
     "lib/**/*"
@@ -17,12 +17,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ryansonshine/typescript-npm-package-template.git"
+    "url": "git+https://github.com/solana-mobile/safari-extension-walletlib.git"
   },
   "license": "MIT",
   "author": {
     "name": "Michael Sulistio",
-    "email": "ryansonshine@users.noreply.github.com",
+    "email": "michaelsulistio@gmail.com",
     "url": "https://github.com/michaelsulistio"
   },
   "engines": {
@@ -34,9 +34,9 @@
     "solana"
   ],
   "bugs": {
-    "url": "https://github.com/ryansonshine/typescript-npm-package-template/issues"
+    "url": "https://github.com/solana-mobile/safari-extension-walletlib/issues"
   },
-  "homepage": "https://github.com/ryansonshine/typescript-npm-package-template#readme",
+  "homepage": "https://github.com/solana-mobile/safari-extension-walletlib#readme",
   "devDependencies": {
     "@types/firefox-webext-browser": "^120.0.0",
     "@types/jest": "^27.5.2",

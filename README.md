@@ -1,6 +1,8 @@
 # Safari Extension Walletlib
 
-> A two part SDK that facilitates a simple Wallet RPC scheme for Javascript to Swift communication within a Safari Web Extension for iOS. The SDK is comprised two separate libraries: a Javascript library and a Swift library. The library is designed to be extendable and allow wallets to add their own customized RPC methods.
+## About
+
+A two part SDK that facilitates a simple Wallet RPC scheme for Javascript to Swift communication within a Safari Web Extension for iOS. The SDK is comprised two separate libraries: a Javascript library and a Swift library. The library is designed to be extendable and allow wallets to add their own customized RPC methods.
 
 ## Installation
 
