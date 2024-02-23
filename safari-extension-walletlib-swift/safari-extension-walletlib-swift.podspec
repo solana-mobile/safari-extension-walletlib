@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'safari-extension-walletlib-swift'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of safari-extension-walletlib-swift.'
+  s.summary          = 'A Swift SDK to receive and respond to Safari Extension Wallet JS messages.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,14 +18,15 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
-                       DESC
+  safari-extension-walletlib-swift is the Swift library portion of a two part SDK for Safari Extension Wallet communication.
+  It defines basic wallet RPC requests that a wallet might need, an extendable interface for defining add custom requests, and helper functions to parse and respond to these requests. 
+                         DESC
 
-  s.homepage         = 'https://github.com/michaelsulistio/safari-extension-walletlib-swift'
+  s.homepage         = 'https://github.com/solana-mobile/safari-extension-walletlib'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'michaelsulistio' => 'michaelsulistio@gmail.com' }
-  s.source           = { :git => 'https://github.com/michaelsulistio/safari-extension-walletlib-swift.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/solana-mobile/safari-extension-walletlib.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '15.0'
