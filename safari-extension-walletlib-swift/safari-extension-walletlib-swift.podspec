@@ -31,7 +31,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '15.0'
 
-  s.source_files = 'safari-extension-walletlib-swift/Classes/**/*'
+  s.source_files = 'safari-extension-walletlib-swift/safari-extension-walletlib-swift/Classes/**/*'
   s.module_name = 'SafariExtensionWalletlibSwift'
   
   # s.resource_bundles = {
