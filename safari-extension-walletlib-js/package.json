@@ -6,10 +6,10 @@
   "files": [
     "lib/**/*"
   ],
+  "private": false,
   "scripts": {
     "build": "tsc --project tsconfig.build.json",
     "clean": "rm -rf ./lib/",
-    "cm": "cz",
     "lint": "eslint ./src/ --fix",
     "test:watch": "jest --watch",
     "test": "jest --coverage",
