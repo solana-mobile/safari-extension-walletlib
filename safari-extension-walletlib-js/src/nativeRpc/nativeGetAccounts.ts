@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 import { sendNativeRpcRequest } from './sendNativeRpcRequest';
 import { Base58EncodedAddress, NativeRpcResponse } from './types';
+import { SafariExtensionWalletlibRpcError } from './errors';
 
 /* Get Accounts */
 export type NativeGetAccountsResult = {
@@ -31,15 +32,14 @@ export async function sendNativeGetAccountsRequest({
   });
 
   if (nativeResponse.result) {
-    const resultObj = JSON.parse(nativeResponse.result);
-    if (isValidNativeGetAccountsResult(resultObj)) {
-      return resultObj;
-    } else {
-      throw new Error(
-        'Response does not match the NativeGetAccountsResult structure.'
-      );
-    }
+    return JSON.parse(nativeResponse.result);
+  } else if (nativeResponse.error) {
+    throw new SafariExtensionWalletlibRpcError(
+      nativeResponse.id,
+      nativeResponse.error.code,
+      nativeResponse.error.message
+    );
   } else {
-    throw new Error(nativeResponse.error?.message ?? 'Invalid RPC Response');
+    throw new Error('Received an unexpected response format.');
   }
 }

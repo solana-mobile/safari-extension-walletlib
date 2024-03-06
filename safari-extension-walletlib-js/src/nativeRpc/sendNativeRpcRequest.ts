@@ -15,7 +15,6 @@ export async function sendNativeRpcRequest({
   try {
     return await browser.runtime.sendNativeMessage('_', request);
   } catch (error) {
-    console.error('RPC request failed:', error);
-    throw error;
+    throw new Error('Error sending native message');
   }
 }

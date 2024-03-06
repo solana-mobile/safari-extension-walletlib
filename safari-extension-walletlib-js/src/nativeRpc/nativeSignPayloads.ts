@@ -6,6 +6,7 @@ import {
   Base64EncodedSignedPayload,
   NativeRpcResponse,
 } from './types';
+import { SafariExtensionWalletlibRpcError } from './errors';
 
 /* Sign Payloads */
 export type NativeSignPayloadsParams = {
@@ -48,15 +49,14 @@ export async function sendNativeSignPayloadsRequest({
   });
 
   if (nativeResponse.result) {
-    const resultObj = JSON.parse(nativeResponse.result);
-    if (isValidSignPayloadsResult(resultObj)) {
-      return resultObj;
-    } else {
-      throw new Error(
-        'Response does not match the NativeSignPayloadsResult structure.'
-      );
-    }
+    return JSON.parse(nativeResponse.result);
+  } else if (nativeResponse.error) {
+    throw new SafariExtensionWalletlibRpcError(
+      nativeResponse.id,
+      nativeResponse.error.code,
+      nativeResponse.error.message
+    );
   } else {
-    throw new Error(nativeResponse.error?.message ?? 'Invalid RPC Response');
+    throw new Error('Received an unexpected response format.');
   }
 }
