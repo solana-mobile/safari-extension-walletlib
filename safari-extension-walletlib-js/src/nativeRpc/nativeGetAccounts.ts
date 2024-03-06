@@ -1,11 +1,8 @@
+import { v4 } from 'uuid';
 import { sendNativeRpcRequest } from './sendNativeRpcRequest';
-import { Base58EncodedAddress, JSONObject, NativeRpcResponse } from './types';
+import { Base58EncodedAddress, NativeRpcResponse } from './types';
 
 /* Get Accounts */
-export type NativeGetAccountsParams = {
-  extra_data?: Record<string, JSONObject>;
-};
-
 export type NativeGetAccountsResult = {
   addresses: Base58EncodedAddress[];
 };
@@ -23,13 +20,14 @@ function isValidNativeGetAccountsResult(
 }
 
 export async function sendNativeGetAccountsRequest({
-  extra_data = {},
-}: NativeGetAccountsParams = {}): Promise<NativeGetAccountsResult> {
+  id = v4(),
+}: {
+  id?: string;
+}): Promise<NativeGetAccountsResult> {
   const nativeResponse: NativeRpcResponse = await sendNativeRpcRequest({
     method: NATIVE_GET_ACCOUNTS_RPC_METHOD,
-    params: {
-      extra_data,
-    },
+    params: null,
+    id,
   });
 
   if (nativeResponse.result) {

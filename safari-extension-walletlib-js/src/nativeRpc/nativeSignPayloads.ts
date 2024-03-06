@@ -1,9 +1,9 @@
+import { v4 } from 'uuid';
 import { sendNativeRpcRequest } from './sendNativeRpcRequest';
 import {
   Base64EncodedAddress,
   Base64EncodedPayload,
   Base64EncodedSignedPayload,
-  JSONObject,
   NativeRpcResponse,
 } from './types';
 
@@ -11,7 +11,6 @@ import {
 export type NativeSignPayloadsParams = {
   address: Base64EncodedAddress;
   payloads: Base64EncodedPayload[];
-  extra_data?: Record<string, JSONObject>;
 };
 
 export type NativeSignPayloadsResult = {
@@ -35,15 +34,17 @@ export const NATIVE_SIGN_PAYLOADS_RPC_METHOD = 'NATIVE_SIGN_PAYLOADS_METHOD';
 export async function sendNativeSignPayloadsRequest({
   address,
   payloads,
-  extra_data,
-}: NativeSignPayloadsParams): Promise<NativeSignPayloadsResult> {
+  id = v4(),
+}: NativeSignPayloadsParams & {
+  id?: string;
+}): Promise<NativeSignPayloadsResult> {
   const nativeResponse: NativeRpcResponse = await sendNativeRpcRequest({
     method: NATIVE_SIGN_PAYLOADS_RPC_METHOD,
-    params: {
+    params: JSON.stringify({
       address,
       payloads,
-      extra_data: extra_data ?? {},
-    },
+    }),
+    id,
   });
 
   if (nativeResponse.result) {
