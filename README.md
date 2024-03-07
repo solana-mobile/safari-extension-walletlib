@@ -2,23 +2,27 @@
 
 ## About
 
-A two part SDK that facilitates a simple Wallet RPC scheme for Javascript to Swift communication within a Safari Web Extension for iOS. The SDK is comprised two separate libraries: a Javascript library and a Swift library. The library is designed to be extendable and allow wallets to add their own customized RPC methods.
+A two part SDK that facilitates a simple Wallet [JSON RPC 2.0](https://www.jsonrpc.org/specification) spec for Javascript to Swift communication within a Safari Web Extension for iOS. The SDK is comprised two separate libraries: a Javascript library and a Swift library. The library is designed to be extendable and allow wallets to add their own customized RPC methods.
 
 ## Installation
 
 The consumer of this SDK will need to install both the Javascript NPM package and the Swift podfile. Although optional, these two
 libraries conveniently share the same RPC spec.
 
+### 1. Install JS library
+
 In the Javascript project of your Safari Extension, run:
 
-```
-npm install <TODO: Publish npm package>
+```bash
+npm install @solana-mobile/safari-extension-walletlib-js
 ```
 
-In the Swift Safari Extension target of your XCode project, run:
+### 2. Install Swift Cocoapod
 
-```
-pod install <TODO: Publish Podfile>
+In the Swift Safari Extension target of your Podfile add:
+
+```ruby
+  pod 'safari-extension-walletlib-swift'
 ```
 
 ## RPC methods
@@ -28,10 +32,10 @@ The SDK provides an implementation of two initial Wallet RPC requests for conven
 - _GetAccounts_
 - _SignPayloads_
 
-Using them is optional and the wallet can create their own custom RPC requests, explained in the next section.
+Using them is optional and the wallet can create their own custom RPC requests using `sendNativeRpcRequest`, explained in the next section.
 
-These RPC methods are defined by a JSON Serializable Parameter and Result type. These types will are defined
-equivalently in both the Javascript library and the Swift library.
+These RPC methods are defined by a JSON Serializable Parameter and Result type. The JS and Swift side should define
+these Parameter and Result types equivalently.
 
 ### GetAccounts
 
@@ -82,21 +86,48 @@ try {
 
 The Swift library provides extension methods on the `NSExtensionContext` to parse these RPC requests and respond back to the Javascript side.
 
+### Request Parsing
+
 `requestMethod() -> String?`
 
-- Retrieves the RPC request's method name. Returns `nil` if unable to parse.
+- Returns the RPC request method name. Returns `nil` if unable to parse.
 
 `decodeRpcRequestParameter<T: Decodable>(toType type: T.Type) -> T?`
 
-- Decodes JSON string parameters from the RPC request into a specified `Decodable` type `T`. Returns an instance of `T` or `nil` on failure.
+- Decodes JSON string parameters from the RPC request into a specified `Decodable` type `T`. Returns an instance of `nil` on failure.
+
+`requestId() -> String?`
+
+- Returns the id of the request.
+
+### Request completion
 
 `completeRpcRequestWith(result: Encodable)`
 
 - Completes an RPC request with a success result. Encodes the result to JSON and responds to Javascript. On failure to encode, it completes the request with an error.
 
-`completeRpcRequestWith(errorMessage: String)`
+`completeRpcRequestWith(error: RPCError)`
 
-- Completes an RPC request with an error message.
+- Completes an RPC request with a convenience `RpcError` class that follows the [JSON RPC 2.0 error spec](https://www.jsonrpc.org/specification).
+
+`completeRpcRequestWith(errorCode: Int, errorMessage: String)`
+
+- Completes an RPC request with an error that follows the [JSON RPC 2.0 error spec](https://www.jsonrpc.org/specification).
+
+### Errors
+
+The Swift library provides a WalletLibRpcErrors enum class that defines some convenience JSON RPC errors:
+
+```swift
+public class WalletlibRpcErrors {
+    public static let parseError = RPCError(code: -32700, message: "Parse error")
+    public static let invalidRequest = RPCError(code: -32600, message: "Invalid Request")
+    public static let methodNotFound = RPCError(code: -32601, message: "Method not found")
+    public static let invalidParams = RPCError(code: -32602, message: "Invalid params")
+    public static let internalError = RPCError(code: -32603, message: "Internal error")
+    public static let notSigned = RPCError(code: -3, message: "Payload not signed")
+}
+```
 
 ### Example: Handling requests
 
@@ -108,7 +139,7 @@ import SafariExtensionWalletlibSwift
 func beginRequest(with context: NSExtensionContext) {
   // Parse the method identifier from `context`
   guard let method = context.requestMethod() else {
-      context.completeRpcRequestWith(errorMessage: "Error parsing method")
+      context.completeRpcRequestWith(error: WalletlibRpcErrors.methodNotFound)
       return
   }
 
@@ -120,14 +151,14 @@ func beginRequest(with context: NSExtensionContext) {
     // Decode SignPayloads params
     guard let params: SignPayloadsParams = context.decodeRpcRequestParameter(toType: SignPayloadsParams.self),
       !params.payloads.isEmpty else {
-      context.completeRpcRequestWith(errorMessage: "Error parsing Sign Payloads request")
+      context.completeRpcRequestWith(error: WalletlibRpcErrors.notSigned)
       return
     }
     // Implement signing then complete the request with result
     context.completeRpcRequestWith(result: SignPayloadsResult(signed_payloads: ["<encoded_signed_payload>"]))
     return
   default:
-    context.completeRpcRequestWith(errorMessage: "Unsupported method")
+    context.completeRpcRequestWith(error: WalletlibRpcErrors.methodNotFound)
     return
   }
 }
@@ -142,7 +173,7 @@ in Javascript and Swift.
 
 ### Define the request model in Javascript
 
-Define a method identifier, parameters, and a result type. Ensure that these types are JSON serializable. The `JSONObject` helper type conforms to this.
+Define a method identifier, parameters, and a result type. Ensure that these types are JSON serializable.
 
 ```ts
 // 1. Define a method identifier
@@ -206,6 +237,8 @@ if (nativeResponse.result) {
 }
 ```
 
+Optionally, you can include an `id` parameter, but if not provided the library will generate a random `id` to comply with the JSON RPC 2.0 spec.
+
 ### Respond to the request
 
 In the Swift Extension Handler, the wallet can filter and parse this custom RPC request, then handle accordingly.
@@ -213,7 +246,7 @@ In the Swift Extension Handler, the wallet can filter and parse this custom RPC 
 ```swift
 func beginRequest(with context: NSExtensionContext) {
   guard let method = context.requestMethod() else {
-      context.completeRpcRequestWith(errorMessage: "Unsupported method")
+      context.completeRpcRequestWith(error: WalletlibRpcErrors.methodNotFound)
       return
   }
 
@@ -221,7 +254,7 @@ func beginRequest(with context: NSExtensionContext) {
   case MY_CUSTOM_RPC_METHOD:
       context.completeRpcRequestWith(result: MyCustomPingRequestResult(pong: "pong!"))
   default:
-      context.completeRpcRequestWith(errorMessage: "Unsupported method")
+      context.completeRpcRequestWith(error: WalletlibRpcErrors.methodNotFound)
   }
 }
 ```
