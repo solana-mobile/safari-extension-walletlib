@@ -48,15 +48,17 @@ export async function sendNativeSignPayloadsRequest({
     id,
   });
 
-  if (nativeResponse.result) {
-    return JSON.parse(nativeResponse.result);
-  } else if (nativeResponse.error) {
+  if (nativeResponse.error) {
     throw new SafariExtensionWalletlibRpcError(
       nativeResponse.id,
       nativeResponse.error.code,
       nativeResponse.error.message
     );
-  } else {
+  }
+
+  if (!nativeResponse?.result) {
     throw new Error('Received an unexpected response format.');
   }
+
+  return JSON.parse(nativeResponse.result);
 }
