@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'safari-extension-walletlib-swift'
-  s.version          = '0.1.0'
+  s.version          = '0.2.0'
   s.summary          = 'A Swift SDK to receive and respond to Safari Extension Wallet JS messages.'
 
 # This description is used to generate tags and improve search results.

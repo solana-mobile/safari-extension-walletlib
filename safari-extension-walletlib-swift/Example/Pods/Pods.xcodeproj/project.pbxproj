@@ -184,6 +184,7 @@
 		FBF9280A2B86CD5A0015FC47 /* SignPayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF928062B86CD5A0015FC47 /* SignPayloads.swift */; };
 		FBF9280B2B86CD5A0015FC47 /* GetAccounts.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF928072B86CD5A0015FC47 /* GetAccounts.swift */; };
 		FBF9280C2B86CD5A0015FC47 /* NSExtensionContext+RpcRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF928092B86CD5A0015FC47 /* NSExtensionContext+RpcRequest.swift */; };
+		FBF9280F2B98F4C80015FC47 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBF9280E2B98F4C80015FC47 /* Errors.swift */; };
 		FC4F734925BC0EDDCD7C10AFBF93C576 /* DSL.h in Headers */ = {isa = PBXBuildFile; fileRef = E832A6B1DAC31C3F7970178C4A4F3384 /* DSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FF8307B7346F4D3BA13C11AECFE6EDD0 /* FBSnapshotTestCase.h in Headers */ = {isa = PBXBuildFile; fileRef = 4157671EF7F2D1077A5624CDA1ADE6B3 /* FBSnapshotTestCase.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -476,6 +477,7 @@
 		FBF928062B86CD5A0015FC47 /* SignPayloads.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignPayloads.swift; sourceTree = "<group>"; };
 		FBF928072B86CD5A0015FC47 /* GetAccounts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GetAccounts.swift; sourceTree = "<group>"; };
 		FBF928092B86CD5A0015FC47 /* NSExtensionContext+RpcRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSExtensionContext+RpcRequest.swift"; sourceTree = "<group>"; };
+		FBF9280E2B98F4C80015FC47 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Errors.swift; path = "../safari-extension-walletlib-swift/Classes/Errors/Errors.swift"; sourceTree = "<group>"; };
 		FF38152B094FED7E52DF8F5187C0D982 /* ExampleHooks.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExampleHooks.swift; path = Sources/Quick/Hooks/ExampleHooks.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -781,6 +783,7 @@
 		41624536A2DF5174E8B772B8292FD050 /* safari-extension-walletlib-swift */ = {
 			isa = PBXGroup;
 			children = (
+				FBF9280D2B98F4B20015FC47 /* Errors */,
 				FBF928082B86CD5A0015FC47 /* Extensions */,
 				FBF928052B86CD5A0015FC47 /* RpcRequestModels */,
 				415F9607F198D4C4FA5E0D8F50E7C66C /* Pod */,
@@ -1009,6 +1012,14 @@
 			);
 			name = Extensions;
 			path = "safari-extension-walletlib-swift/Classes/Extensions";
+			sourceTree = "<group>";
+		};
+		FBF9280D2B98F4B20015FC47 /* Errors */ = {
+			isa = PBXGroup;
+			children = (
+				FBF9280E2B98F4C80015FC47 /* Errors.swift */,
+			);
+			path = Errors;
 			sourceTree = "<group>";
 		};
 		FF88FFBB2068068E4D10A94A62D5E4FB /* Development Pods */ = {
@@ -1538,6 +1549,7 @@
 				C390C6005353FB986CB52F474CEF8588 /* FBSnapshotTestController.m in Sources */,
 				2975A09730FD83DC0897129A11EA6585 /* SwiftSupport.swift in Sources */,
 				FBF9280C2B86CD5A0015FC47 /* NSExtensionContext+RpcRequest.swift in Sources */,
+				FBF9280F2B98F4C80015FC47 /* Errors.swift in Sources */,
 				74339C58AC4E5631FB8C0E662668A796 /* UIApplication+StrictKeyWindow.m in Sources */,
 				FBF9280B2B86CD5A0015FC47 /* GetAccounts.swift in Sources */,
 				B52281F9F4340D4FC8ABB2FEB1FEC08E /* UIImage+Compare.m in Sources */,
