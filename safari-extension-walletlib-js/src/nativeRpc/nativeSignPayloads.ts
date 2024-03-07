@@ -1,17 +1,17 @@
+import { v4 } from 'uuid';
 import { sendNativeRpcRequest } from './sendNativeRpcRequest';
 import {
   Base64EncodedAddress,
   Base64EncodedPayload,
   Base64EncodedSignedPayload,
-  JSONObject,
   NativeRpcResponse,
 } from './types';
+import { SafariExtensionWalletlibRpcError } from './errors';
 
 /* Sign Payloads */
 export type NativeSignPayloadsParams = {
   address: Base64EncodedAddress;
   payloads: Base64EncodedPayload[];
-  extra_data?: Record<string, JSONObject>;
 };
 
 export type NativeSignPayloadsResult = {
@@ -35,27 +35,30 @@ export const NATIVE_SIGN_PAYLOADS_RPC_METHOD = 'NATIVE_SIGN_PAYLOADS_METHOD';
 export async function sendNativeSignPayloadsRequest({
   address,
   payloads,
-  extra_data,
-}: NativeSignPayloadsParams): Promise<NativeSignPayloadsResult> {
+  id = v4(),
+}: NativeSignPayloadsParams & {
+  id?: string;
+}): Promise<NativeSignPayloadsResult> {
   const nativeResponse: NativeRpcResponse = await sendNativeRpcRequest({
     method: NATIVE_SIGN_PAYLOADS_RPC_METHOD,
-    params: {
+    params: JSON.stringify({
       address,
       payloads,
-      extra_data: extra_data ?? {},
-    },
+    }),
+    id,
   });
 
-  if (nativeResponse.result) {
-    const resultObj = JSON.parse(nativeResponse.result);
-    if (isValidSignPayloadsResult(resultObj)) {
-      return resultObj;
-    } else {
-      throw new Error(
-        'Response does not match the NativeSignPayloadsResult structure.'
-      );
-    }
-  } else {
-    throw new Error(nativeResponse.error?.message ?? 'Invalid RPC Response');
+  if (nativeResponse.error) {
+    throw new SafariExtensionWalletlibRpcError(
+      nativeResponse.id,
+      nativeResponse.error.code,
+      nativeResponse.error.message
+    );
   }
+
+  if (!nativeResponse?.result) {
+    throw new Error('Received an unexpected response format.');
+  }
+
+  return JSON.parse(nativeResponse.result);
 }

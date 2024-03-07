@@ -1,6 +1,6 @@
 {
   "name": "@solana-mobile/safari-extension-walletlib-js",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The typescript portion of the Safari Extension Walletlib SDK for Solana Wallet apps.",
   "main": "./lib/index.js",
   "files": [

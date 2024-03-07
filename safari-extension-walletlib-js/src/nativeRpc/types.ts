@@ -5,23 +5,11 @@ export type Base58EncodedAddress = string;
 export type Base64EncodedPayload = string;
 export type Base64EncodedSignedPayload = string;
 
-export type JSONValue =
-  | string
-  | number
-  | boolean
-  | null
-  | JSONArray
-  | JSONObject;
-
-export interface JSONArray extends Array<JSONValue> {}
-
-export interface JSONObject {
-  [key: string]: JSONValue;
-}
-
+// JSON-RPC Request
 export interface NativeRpcRequest {
   method: string;
-  params: JSONObject;
+  params: string | null;
+  id: string;
 }
 
 export interface NativeRpcResponse {
@@ -30,4 +18,5 @@ export interface NativeRpcResponse {
     code: number;
     message: string;
   };
+  id: string;
 }
